@@ -1,0 +1,88 @@
+import React from 'react';
+import { useState } from 'react';
+
+const Login = () => {
+    const [LogedInPage, setLogedInPage] = useState(true);
+    const [FullName, setFullName] = useState("");
+    const [EmailId, setEmailId] = useState("");
+    const [Password, setPassword] = useState("");
+
+    console.log(FullName);
+
+    const isLoggedIn = ()=>{
+        setLogedInPage(!LogedInPage);
+
+    }
+
+  return (
+    <div
+      className="min-h-screen bg-cover bg-center flex items-center justify-center"
+      style={{
+        backgroundImage:
+          'url("https://assets.nflxext.com/ffe/siteui/vlv3/914ad279-199e-4095-9c10-2409dc9e5e1b/web/IN-en-20250519-TRIFECTA-perspective_8f1ca896-9e49-4a4e-90f0-22fc49650bd9_large.jpg")',
+      }}
+    >
+      <div className="bg-black bg-opacity-70 p-8 rounded-xl shadow-lg max-w-md w-full text-white">
+        <h1 className="text-3xl font-bold text-center mb-6">{LogedInPage ? "Login" : "SignUp"}</h1>
+
+        <form>
+
+            {!LogedInPage &&   <div className="flex flex-col gap-1 mb-6">
+            <label htmlFor="Password" className="text-sm font-medium">
+              Full Name
+            </label>
+            <input value={FullName} onChange={(e) => setFullName(e.target.value)}
+              className="p-3 rounded-md border border-gray-400 bg-gray-900 text-white focus:outline-none focus:ring-2 focus:ring-red-600"
+              type="password"
+              id="Password"
+              name="Password"
+              placeholder="Enter your Full Name"
+              required
+            />
+          </div>
+}
+          <div className="flex flex-col gap-1 mb-5">
+            <label htmlFor="EmailId" className="text-sm font-medium" >
+              Email Id
+            </label> 
+            <input value={EmailId} onChange={(e)=>{setEmailId(e.target.value)}}
+              className="p-3 rounded-md border border-gray-400 bg-gray-900 text-white focus:outline-none focus:ring-2 focus:ring-red-600"
+              type="email"
+              id="EmailId"
+              name="EmailId"
+              placeholder="Enter your email"
+              required
+            />
+          </div>
+
+          <div className="flex flex-col gap-1 mb-6">
+            <label htmlFor="Password" className="text-sm font-medium">
+              Password
+            </label>
+            <input value={Password} onChange={(e)=> setPassword(e.target.value)}
+              className="p-3 rounded-md border border-gray-400 bg-gray-900 text-white focus:outline-none focus:ring-2 focus:ring-red-600"
+              type="password"
+              id="Password"
+              name="Password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          <h3 className='mb-5 cursor-pointer' onClick={isLoggedIn}>{LogedInPage ? "New User? Sign Up Now" : "Already Registered? Sign In Now"}</h3>
+
+          <button
+            type="submit"
+            className="w-full bg-red-600 hover:bg-red-700 transition-colors text-white py-3 rounded-md font-semibold"
+          >
+            {LogedInPage ? "Login" : "SignUp"}
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+};
+
+export default Login;
+
+
