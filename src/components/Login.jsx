@@ -1,11 +1,14 @@
 import React from 'react';
 import { useState } from 'react';
+import {Validate} from '../utils/validate';
 
 const Login = () => {
     const [LogedInPage, setLogedInPage] = useState(true);
     const [FullName, setFullName] = useState("");
     const [EmailId, setEmailId] = useState("");
     const [Password, setPassword] = useState("");
+    const [Error, setError] = useState("");
+
 
     console.log(FullName);
 
@@ -13,6 +16,15 @@ const Login = () => {
         setLogedInPage(!LogedInPage);
 
     }
+
+const Validation = Validate(FullName, EmailId, Password);
+
+const HandleSubmit = ()=>{
+    const Error = Validate(FullName, EmailId, Password);
+    setError(Error);
+
+
+}
 
   return (
     <div
@@ -68,15 +80,14 @@ const Login = () => {
               required
             />
           </div>
-
-          <h3 className='mb-5 cursor-pointer' onClick={isLoggedIn}>{LogedInPage ? "New User? Sign Up Now" : "Already Registered? Sign In Now"}</h3>
-
-          <button
+          <p className='text-red-700 font-bold mb-3'>{Error}</p>
+          <button onClick={HandleSubmit}
             type="submit"
             className="w-full bg-red-600 hover:bg-red-700 transition-colors text-white py-3 rounded-md font-semibold"
           >
             {LogedInPage ? "Login" : "SignUp"}
           </button>
+          <h3 className='mt-2 cursor-pointer text-center p-2' onClick={isLoggedIn}>{LogedInPage ? "New User? Sign Up Now" : "Already Registered? Sign In Now"}</h3>
         </form>
       </div>
     </div>
