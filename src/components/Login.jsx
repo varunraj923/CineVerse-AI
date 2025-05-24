@@ -1,6 +1,9 @@
 import React from 'react';
 import { useState } from 'react';
 import {Validate} from '../utils/validate';
+import {auth} from '../utils/firebase'
+import { createUserWithEmailAndPassword , signInWithEmailAndPassword } from "firebase/auth";
+
 
 const Login = () => {
     const [LogedInPage, setLogedInPage] = useState(true);
@@ -10,6 +13,7 @@ const Login = () => {
     const [Error, setError] = useState("");
 
 
+
     console.log(FullName);
 
     const isLoggedIn = ()=>{
@@ -17,12 +21,51 @@ const Login = () => {
 
     }
 
-const Validation = Validate(FullName, EmailId, Password);
 
-const HandleSubmit = ()=>{
-    const Error = Validate(FullName, EmailId, Password);
-    setError(Error);
 
+const HandleSignupSubmit = async(e)=>{
+    e.preventDefault();
+    const RegexErr = Validate(FullName, EmailId, Password);
+    setError(RegexErr);
+
+    if(Error) return;
+
+    await createUserWithEmailAndPassword(auth, EmailId, Password)
+  .then((userCredential) => {
+    // Signed up 
+    const user = userCredential.user;
+    console.log(user);
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+
+    setError(errorCode + ""  + errorMessage);
+    // ..
+  })
+
+}
+
+const HandleLoginSubmit = async(e) =>{
+     e.preventDefault();
+     const RegexErr = Validate(FullName, EmailId, Password);
+    setError(RegexErr);
+
+    if(Error) return;
+
+    signInWithEmailAndPassword(auth, EmailId, Password)
+  .then((userCredential) => {
+    // Signed in 
+    const user = userCredential.user;
+    console.log(user);
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    setError(errorCode + " " + errorMessage)
+  });
 
 }
 
@@ -45,7 +88,7 @@ const HandleSubmit = ()=>{
             </label>
             <input value={FullName} onChange={(e) => setFullName(e.target.value)}
               className="p-3 rounded-md border border-gray-400 bg-gray-900 text-white focus:outline-none focus:ring-2 focus:ring-red-600"
-              type="password"
+              
               id="Password"
               name="Password"
               placeholder="Enter your Full Name"
@@ -81,7 +124,7 @@ const HandleSubmit = ()=>{
             />
           </div>
           <p className='text-red-700 font-bold mb-3'>{Error}</p>
-          <button onClick={HandleSubmit}
+          <button onClick={LogedInPage ? HandleLoginSubmit : HandleSignupSubmit}
             type="submit"
             className="w-full bg-red-600 hover:bg-red-700 transition-colors text-white py-3 rounded-md font-semibold"
           >
