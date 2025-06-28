@@ -2,7 +2,9 @@ import React from 'react';
 import { useState } from 'react';
 import {Validate} from '../utils/validate';
 import {auth} from '../utils/firebase'
-import { createUserWithEmailAndPassword , signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword , signInWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { useNavigate } from 'react-router-dom';
+
 
 
 const Login = () => {
@@ -11,6 +13,7 @@ const Login = () => {
     const [EmailId, setEmailId] = useState("");
     const [Password, setPassword] = useState("");
     const [Error, setError] = useState("");
+    const navigate = useNavigate();
 
 
 
@@ -35,6 +38,7 @@ const HandleSignupSubmit = async(e)=>{
     // Signed up 
     const user = userCredential.user;
     console.log(user);
+    navigate('/BrowsePage');
     // ...
   })
   .catch((error) => {
@@ -47,27 +51,31 @@ const HandleSignupSubmit = async(e)=>{
 
 }
 
-const HandleLoginSubmit = async(e) =>{
-     e.preventDefault();
-     const RegexErr = Validate(FullName, EmailId, Password);
-    setError(RegexErr);
+const HandleLoginSubmit = async (e) => {
+  e.preventDefault();
 
-    if(Error) return;
+  try {
+    // Step 1: Login the user
+    await signInWithEmailAndPassword(auth, EmailId, Password);
 
-    signInWithEmailAndPassword(auth, EmailId, Password)
-  .then((userCredential) => {
-    // Signed in 
-    const user = userCredential.user;
-    console.log(user);
-    // ...
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    setError(errorCode + " " + errorMessage)
-  });
+    // Step 2: Update display name
+    if (auth.currentUser) {
+      await updateProfile(auth.currentUser, {
+        displayName: FullName,
+      });
 
-}
+      // Optional: reload to ensure update reflects
+      await auth.currentUser.reload();
+
+      console.log("Login successful. Display Name:", auth.currentUser.displayName);
+      navigate('/BrowsePage');
+    }
+
+  } catch (error) {
+    setError(`${error.code} ${error.message}`);
+  }
+};
+
 
   return (
     <div
@@ -77,7 +85,7 @@ const HandleLoginSubmit = async(e) =>{
           'url("https://assets.nflxext.com/ffe/siteui/vlv3/914ad279-199e-4095-9c10-2409dc9e5e1b/web/IN-en-20250519-TRIFECTA-perspective_8f1ca896-9e49-4a4e-90f0-22fc49650bd9_large.jpg")',
       }}
     >
-      <div className="bg-black bg-opacity-70 p-8 rounded-xl shadow-lg max-w-md w-full text-white">
+      <div className="bg-black bg-opacity-70 bg-opacity-50 p-8 rounded-xl shadow-lg max-w-md w-full text-white">
         <h1 className="text-3xl font-bold text-center mb-6">{LogedInPage ? "Login" : "SignUp"}</h1>
 
         <form>
@@ -89,8 +97,8 @@ const HandleLoginSubmit = async(e) =>{
             <input value={FullName} onChange={(e) => setFullName(e.target.value)}
               className="p-3 rounded-md border border-gray-400 bg-gray-900 text-white focus:outline-none focus:ring-2 focus:ring-red-600"
               
-              id="Password"
-              name="Password"
+              id="FullName"
+              name="FullName"
               placeholder="Enter your Full Name"
               required
             />
