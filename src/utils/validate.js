@@ -23,3 +23,6 @@ export const Validate = (FullName, EmailId, Password) => {
 };
 
 
+
+
+
