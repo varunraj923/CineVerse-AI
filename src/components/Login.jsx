@@ -3,23 +3,26 @@ import { useState } from 'react';
 import {Validate} from '../utils/validate';
 import {auth} from '../utils/firebase'
 import { createUserWithEmailAndPassword , signInWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { addUser } from '../utils/userSlice';
+
+
+
+import Header from './Header';
+
 
 
 
 
 
 const Login = () => {
-  const dispatch = useDispatch();
+ 
+
  
     const [LogedInPage, setLogedInPage] = useState(true);
     const [FullName, setFullName] = useState("");
     const [EmailId, setEmailId] = useState("");
     const [Password, setPassword] = useState("");
     const [Error, setError] = useState("");
-    const navigate = useNavigate();
+  
 
 
 
@@ -44,7 +47,7 @@ const HandleSignupSubmit = async(e)=>{
     // Signed up 
     const user = userCredential.user;
     console.log(user);
-    navigate('/BrowsePage');
+  
     // ...
   })
   .catch((error) => {
@@ -74,9 +77,8 @@ const HandleLoginSubmit = async (e) => {
       await auth.currentUser.reload();
 
       console.log("Login successful. Display Name:", auth.currentUser.displayName);
-       const {uid, email, displayName} = auth.currentUser;
-          dispatch(addUser({uid : uid, email : email, displayName : displayName}));
-      navigate('/BrowsePage');
+      
+     
     }
 
   } catch (error) {
@@ -86,6 +88,8 @@ const HandleLoginSubmit = async (e) => {
 
 
   return (
+    <>
+    <Header/>
     <div
       className="min-h-screen bg-cover bg-center flex items-center justify-center"
       style={{
@@ -150,6 +154,7 @@ const HandleLoginSubmit = async (e) => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 
